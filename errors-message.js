@@ -3,5 +3,7 @@ export const errors = {
     usernameLong: 'username must be least 4 characters long',
     passwordType: 'password must be string',
     passwordLong: 'password must be least 6 characters long',
-    usernameExists: 'username already exists'
+    usernameExists: 'username already exists',
+    usernameNotExists: 'username does not exist',
+    passwordInvalid: 'password is invalid'
 }

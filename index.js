@@ -10,8 +10,25 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
-app.post("/login", (req, res) => {
-  res.json({user: "miguel"})
+app.post("/login", async (req, res) => {
+  const {username, password} = req.body
+  const response = {ok: false, msg: 'Error login user', user: null}
+  try {
+    const user = await UserRepository.login({username, password})
+    if(user){
+      response.ok = true;
+      response.msg = 'User logged'
+      response.user = user;
+    }
+    res.status(200).json(response)
+  } catch (error) {
+    if(errors[error.message]){
+      response.msg += ': ' + errors[error.message]
+    }else{
+      console.log("error en create user:", error.message);
+    }
+    res.status(401).json(response)
+  }
 });
 
 app.post("/register", async (req, res) => {
