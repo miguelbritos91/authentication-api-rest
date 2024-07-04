@@ -1,6 +1,7 @@
 import dbLocal from "db-local";
 import bcrypt from "bcrypt";
 import { SALT } from "./config.js";
+import { Validation } from "./validations.js";
 
 const { Schema } = new dbLocal({ path: "./db" });
 
@@ -13,11 +14,8 @@ const User = Schema("User", {
 export class UserRepository {
   static async create({ username, password }) {
     // validaciones básicas para username y password
-    if (typeof username != "string") throw new Error("usernameType");
-    if (username.length < 4) throw new Error("usernameLong");
-    if (typeof password != "string") throw new Error("passwordType");
-    if (password.length < 6) throw new Error("passwordLong");
-
+    Validation.username(username)
+    Validation.password(password)
     // verificar que username no este registrado
     const user = User.findOne({ username });
     if (user) throw new Error("usernameExists");
@@ -34,5 +32,8 @@ export class UserRepository {
 
     return id;
   }
-  static login({ username, password }) {}
+  static login({ username, password }) {
+    Validation.username(username)
+    Validation.password(password)
+  }
 }
