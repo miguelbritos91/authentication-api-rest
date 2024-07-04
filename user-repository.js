@@ -11,7 +11,7 @@ const User = Schema("User", {
 });
 
 export class UserRepository {
-  static create({ username, password }) {
+  static async create({ username, password }) {
     // validaciones básicas para username y password
     if (typeof username != "string") throw new Error("usernameType");
     if (username.length < 4) throw new Error("usernameLong");
@@ -24,7 +24,7 @@ export class UserRepository {
 
     const id = crypto.randomUUID();
 
-    const passwordHashed = bcrypt.hashSync(password, SALT)
+    const passwordHashed = await bcrypt.hash(password, SALT)
     
     User.create({
       _id: id,

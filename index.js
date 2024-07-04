@@ -14,11 +14,11 @@ app.post("/login", (req, res) => {
   res.json({user: "miguel"})
 });
 
-app.post("/register", (req, res) => {
+app.post("/register", async (req, res) => {
   const {username, password} = req.body
   const response = {ok: false, msg: 'Error create new user', id: null}
   try {
-    const id = UserRepository.create({username, password})
+    const id = await UserRepository.create({username, password})
     if(id){
       response.ok = true;
       response.msg = 'New user create'
