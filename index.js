@@ -6,50 +6,42 @@ import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 
 const app = express();
-app.use(express.json());
 app.set("view engine", "ejs");
 app.set("views", "./views");
 
+app.use(express.json());
 app.use(cookieParser());
-
-const verifyToken = (req, res, next) => {
+app.use((req, res, next) => {
   const token = req.cookies.access_token;
-  if (!token) {
-    return res.redirect("/login");
-  }
 
-  jwt.verify(token, SECRET_TOKEN, (err, decoded) => {
-    if (err) {
-      return res.redirect("/login");
-    }
-    req.user = decoded;
-    next();
-  });
-};
+  req.session = { user: null };
 
-const noLogged = (req, res, next) => {
-  const token = req.cookies.access_token;
-  if (token) {
-    jwt.verify(token, SECRET_TOKEN, (err, decoded) => {
-      if (err) {
-        next();
-      }
-      req.user = decoded;
-      return res.redirect("/");
-    });
-  }
+  try {
+    const data = jwt.verify(token, SECRET_TOKEN);
+    req.session.user = data;
+  } catch (error) {}
+
   next();
-};
-
-app.get("/", verifyToken, (req, res) => {
-  res.render("dashboard", { user: req.user });
 });
 
-app.get("/login", noLogged, (req, res) => {
+app.get("/", (req, res) => {
+  if(req.session.user === null){
+    return res.redirect("/login");
+  }
+  res.render("dashboard", { user: req.session.user });
+});
+
+app.get("/login", (req, res) => {
+  if(req.session.user != null){
+    return res.redirect("/");
+  }
   res.render("login");
 });
 
-app.get("/register", noLogged, (req, res) => {
+app.get("/register", (req, res) => {
+  if(req.session.user != null){
+    return res.redirect("/");
+  }
   res.render("register");
 });
 
@@ -129,20 +121,9 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.post("/logout", verifyToken, async (req, res) => {
-  const response = { ok: false, msg: "Error logiut user" };
-  try {
-    response.ok = true;
-    response.msg = "User logged out";
-    res.clearCookie("access_token").status(200).json(response);
-  } catch (error) {
-    if (errors[error.message]) {
-      response.msg += ": " + errors[error.message];
-    } else {
-      console.log("error en create user:", error.message);
-    }
-    res.status(401).json(response);
-  }
+app.post("/logout", async (req, res) => {
+  const response = { ok: true, msg: "Logout successful" };
+  res.clearCookie("access_token").status(200).json(response);
 });
 
 app.listen(PORT, () => {
