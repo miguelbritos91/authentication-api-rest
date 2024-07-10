@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        color: #ffffff;
+      }
+      @media (min-width: 451px) {
+        .register-container {
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: #121212;
+        }
+        .register-form {
+          width: 100%;
+          max-width: 400px;
+          padding: 15px;
+          margin: 0 auto;
+          background-color: #1e1e1e;
+          color: #ffffff;
+          border-radius: 10px;
+          box-shadow: 0 0 4px rgba(255, 255, 255, 0.1);
+        }
+      }
+      @media (max-width: 450px) {
+        .register-container {
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          background-color: #1e1e1e;
+        }
+        .register-form {
+          width: 100%;
+          padding: 5vh 20px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <div class="form-register">
+        <h2 class="text-center">Registro</h2>
+        <form action="" id="form-register">
+          <div class="form-group">
+            <label for="username">Usuario</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              placeholder="Ingresa tu usuario"
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              placeholder="Ingresa tu contraseña"
+            />
+          </div>
+          <div class="form-group">
+            <label for="name">Nombre</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              placeholder="Ingresa tu nombre"
+            />
+          </div>
+          <div class="form-group">
+            <label for="lastname">Apellido</label>
+            <input
+              type="text"
+              class="form-control"
+              id="lastname"
+              placeholder="Ingresa tu apellido"
+            />
+          </div>
+          <div class="form-group">
+            <label for="birthdate">Fecha de Nacimiento</label>
+            <input type="date" class="form-control" id="birthdate" />
+          </div>
+          <br />
+          <button type="submit" class="btn btn-primary btn-block">
+            Registrarse
+          </button>
+          <div class="text-center mt-3">
+            <a href="/login" class="btn btn-link"
+              >¿Ya tienes una cuenta? Inicia sesión aquí</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      const formRegister = document.getElementById('form-register');
+    formRegister.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,
+        name: document.getElementById('name').value,
+        lastname: document.getElementById('lastname').value,
+        birthdate: document.getElementById('birthdate').value
+      };
+
+      try {
+        const response = await fetch('/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log('Registro exitoso:', result);            
+          window.location.href = "/";
+          // Aquí puedes redirigir al usuario o mostrar un mensaje de éxito
+        } else {
+          console.error('Error en el registro:', response.statusText);
+          // Aquí puedes mostrar un mensaje de error
+        }
+      } catch (error) {
+        console.error('Error en la solicitud:', error);
+        // Aquí puedes manejar errores de red o de la solicitud
+      }
+    });
+    </script>
+  </body>
+</html>
